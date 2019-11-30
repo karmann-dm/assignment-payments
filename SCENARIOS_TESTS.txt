@@ -6,6 +6,7 @@ What client can?
 4. Create the user
 5. Get all accounts by user
 6. Get all payments by account with filter (account statement)
+7. Add new currencies
 
 CASES:
 Create the account in any Currency he want
@@ -43,7 +44,9 @@ Create the user
 Positive cases:
 1. User created successfully
 Negative cases:
--
+1. User already exists
+2. Username is empty
+3. Username is null
 
 Get all accounts by user
 Positive cases:
@@ -62,6 +65,17 @@ Negative cases:
    What should system do? Send client an error with the explanation "Account $ACCOUNT$ does not belong to user with id $ID$" with code 400
 3. What happens? Filter values are incorrect(STATUS, DATE, TYPE)
    What should system do? Send client an error with the explanation "Filters are incorrect" with code 400
+
+Add new currencies
+Positive:
+1. Client successfully creates new currency with params
+Negative:
+1. Minor units is negative
+2. Minor units is null
+3. Mnemonic code is empty
+4. Mnemonic code is null
+5. Full name is empty
+6. Full name is null
 
 Concurrency case:
 ACCOUNT_1, ACCOUNT_2, ACCOUNT_3
@@ -85,6 +99,9 @@ MakePaymentTest
 - Should receive error when Convert(balance) < X with the same currencies
 CreateUserTest
 - Should create user successfully
+- Should receive error when user exists
+- Should receive error when username is empty
+- Should receive error when username is null
 GetAllAccountsTest
 - Should get all accounts by user
 - Should receive error when user does not exist
@@ -96,3 +113,11 @@ GetAllPaymentsTest
 - Should receive error when STATUS does not exist
 - Should receive error when dateFrom > dateTo
 - Should receive error when TYPE does not exist
+CreateCurrencyTest
+- Should create currency successfully
+- Should receive error when minor units is negative
+- Should receive error when minor units is null
+- Should receive error when mnemonic code is empty
+- Should receive error when mnemonic code is null
+- Should receive error when full name is empty
+- Should receive error when full name is null

@@ -9,4 +9,22 @@ public class CreateUserTest {
     public void shouldCreateUser() {
         throw new RuntimeException();
     }
+
+    @DisplayName("Should receive error when user exists")
+    @Test
+    public void userExists() {
+        throw new RuntimeException();
+    }
+
+    @DisplayName("Should receive error when username is empty")
+    @Test
+    public void usernameIsEmpty() {
+        throw new RuntimeException();
+    }
+
+    @DisplayName("Should receive error when username is null")
+    @Test
+    public void usernameIsNull() {
+        throw new RuntimeException();
+    }
 }
