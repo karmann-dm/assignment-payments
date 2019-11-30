@@ -1,0 +1,98 @@
+Who? Client
+What client can?
+1. Create the account in any Currency he want with provided userId
+2. Put money to the account
+3. Make payments to another account
+4. Create the user
+5. Get all accounts by user
+6. Get all payments by account with filter (account statement)
+
+CASES:
+Create the account in any Currency he want
+Positive cases:
+1. Account created successfully, client received the account details as the response of the POST request
+Negative cases:
+1. What happens? Provided user id does not exists
+   What should system do? Send client an error with the explanation "User with id $ID$ does not exists" with code 404
+2. What happens? Currency that he want does not exists
+   What should system do? Send client an error with the explanation "Currency with code $CODE$ does not exist" with code 404
+
+Put money to the account in any currency he want
+Positive cases:
+1. If currency of filling is equal to account currency -> Account had been filled, user received the new account details as the response of the PUT request
+2. If currency of filling is not equal to account currency -> Account had been filled, the converting had been performed, user received the new account details with sell/buy details
+Negative cases:
+1. What happens? Currency that he want does not exists
+   What should system do? Send user an error with the explanation "Currency with code $CODE$ does not exist" with code 404
+
+Make payments with amount = X to another account FROM -> TO
+Positive cases:
+1. If Currency(TO) == Currency(FROM) -> Successful disappearing of money from FROM and appearing to TO
+2. If Currency(TO) != Currency(FROM) -> Successful convertation of money and disappearing converted amount from FROM and appearing to TO
+Negative cases:
+1. What happens? Provided user id does not exists
+   What should system do? Send client an error with the explanation "User with id $ID$ does not exists" with code 404
+2. What happens? Account FROM does not belong to user
+   What should system do? Send client an error with the explanation "Account $ACCOUNT$ does not belong to user with id $ID$" with code 400
+3. Balance of FROM is less than X if currency(from) == currency(to)
+   What should system do? Payment status changes to PROCESSING then to FAILED with description "Not enough money"
+4. Balance of FROM - Converted(X) < 0
+   What should system do? Payment status changes to PROCESSING then to FAILED with description "Not enough money while convert"
+
+Create the user
+Positive cases:
+1. User created successfully
+Negative cases:
+-
+
+Get all accounts by user
+Positive cases:
+1. All accounts of user fetched successfully as the response of HTTP request
+Negative cases:
+1. What happens? User does not exist
+   What should system do? Send client an error with the explanation "User with id $ID$ does not exists" with code 404
+
+Get all payments by account with filter (account statement)
+Positive:
+1. Client receives the statement by filters(STATUS, DATE, TYPE)
+Negative cases:
+1. What happens? User does not exist
+   What should system do? Send client an error with the explanation "User with id $ID$ does not exists" with code 404
+2. What happens? Account does not belong to user
+   What should system do? Send client an error with the explanation "Account $ACCOUNT$ does not belong to user with id $ID$" with code 400
+3. What happens? Filter values are incorrect(STATUS, DATE, TYPE)
+   What should system do? Send client an error with the explanation "Filters are incorrect" with code 400
+
+Concurrency case:
+ACCOUNT_1, ACCOUNT_2, ACCOUNT_3
+When X(ACCOUNT_1 -> ACCOUNT_2) and Y(ACCOUNT_1 -> ACCOUNT_2) and X + Y > Balance(ACCOUNT_1)
+Then one of the transactions should be dismissed because system should provide definitely order of transactions execution
+
+TEST CASES DUE TO SCENARIOS
+CreateAccountTest
+- Should create account successfully
+- Should receive error when user does not exist
+- Should receive error when currency does not exist
+PutMoneyTest
+- Should put money to the account successfully
+- Should receive error when currency does not exist
+MakePaymentTest
+- Should make payment with the same currencies
+- Should make payment with different currencies
+- Should make two payments from one account in the same time with X + Y <= Balance and both of them should succeed
+- Should make two payments from one account in the same time with X + Y > Balance and the second one should fail
+- Should receive error when balance < X with the same currencies
+- Should receive error when Convert(balance) < X with the same currencies
+CreateUserTest
+- Should create user successfully
+GetAllAccountsTest
+- Should get all accounts by user
+- Should receive error when user does not exist
+GetAllPaymentsTest
+- Should get all payments by only STATUS filter
+- Should get all payments by only DATE filter
+- Should get all payments by only TYPE filter
+- Should get all payments by all filters
+- Should receive error when STATUS does not exist
+- Should receive error when dateFrom > dateTo
+- Should receive error when TYPE does not exist
