@@ -1,6 +1,7 @@
 package com.karmanno.payments.rest;
 
 import com.karmanno.payments.dto.CreateAccountRequest;
+import com.karmanno.payments.dto.PutMoneyRequest;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.*;
@@ -17,8 +18,15 @@ public class AccountResource {
         return Response.status(404).build();
     }
 
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/{accountNumber}")
+    public Response putMoneyOnAccount(@PathParam("accountNumber") String accountNumber, PutMoneyRequest request) {
+        return Response.status(404).build();
+    }
+
     @GET
-    public Response getAccounts() {
+    public Response getAccounts(@QueryParam("userId") int userId) {
         return Response.status(404).build();
     }
 

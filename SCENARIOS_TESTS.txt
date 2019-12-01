@@ -7,6 +7,8 @@ What client can?
 5. Get all accounts by user
 6. Get all payments by account with filter (account statement)
 7. Add new currencies
+8. Add prices for currencies
+9. Get sell/buy for currency
 
 CASES:
 Create the account in any Currency he want
@@ -25,6 +27,8 @@ Positive cases:
 Negative cases:
 1. What happens? Currency that he want does not exists
    What should system do? Send user an error with the explanation "Currency with code $CODE$ does not exist" with code 404
+2. What happens? Account that he want does not exists
+   What should system do? Send user an error with the explanation "Account $ACCOUNT$ does not exist" with code 404
 
 Make payments with amount = X to another account FROM -> TO
 Positive cases:
@@ -39,14 +43,18 @@ Negative cases:
    What should system do? Payment status changes to PROCESSING then to FAILED with description "Not enough money"
 4. Balance of FROM - Converted(X) < 0
    What should system do? Payment status changes to PROCESSING then to FAILED with description "Not enough money while convert"
+5. What happens? Account FROM does not exist
+   What should system do? Send client an error with explanation "Account $ACCOUNT$ does not exist"
+6. Account TO does not exist
+   What should system do? Send client an error with explanation "Account $ACCOUNT$ does not exist"
 
 Create the user
 Positive cases:
 1. User created successfully
 Negative cases:
-1. User already exists
-2. Username is empty
-3. Username is null
+1. User already exists? Send client an error 400 with explanation
+2. Username is empty? Send client an error 400 with explanation
+3. Username is null? Send client an error 400 with explanation
 
 Get all accounts by user
 Positive cases:
@@ -70,17 +78,34 @@ Add new currencies
 Positive:
 1. Client successfully creates new currency with params
 Negative:
-1. Minor units is negative
-2. Minor units is null
-3. Mnemonic code is empty
-4. Mnemonic code is null
-5. Full name is empty
-6. Full name is null
+1. Minor units is negative? Send client an error 400 with explanation
+2. Minor units is null? Send client an error 400 with explanation
+3. Mnemonic code is empty? Send client an error 400 with explanation
+4. Mnemonic code is null? Send client an error 400 with explanation
+5. Full name is empty? Send client an error 400 with explanation
+6. Full name is null? Send client an error 400 with explanation
+
+Add prices for currency
+Positive:
+1. Client creates price for currency
+2. Client edits price for currency
+Negative:
+1. Currency FIRST does not exists? Send an error 404 with explanation
+2. Currency SECOND does not exists?  Send an error 404 with explanation
+3. Sell is negative or null? Send an error 400 with explanation
+4. Buy is negative or null? Send an error 400 with explanation
+
+Get sell/buy for currency
+Positive:
+1. Client receives price for currency
+Negative:
+1. Currency FROM does not exist
+2. Currency TO does not exist
 
 Concurrency case:
 ACCOUNT_1, ACCOUNT_2, ACCOUNT_3
 When X(ACCOUNT_1 -> ACCOUNT_2) and Y(ACCOUNT_1 -> ACCOUNT_2) and X + Y > Balance(ACCOUNT_1)
-Then one of the transactions should be dismissed because system should provide definitely order of transactions execution
+Then one of the transactions should be dismissed because system should provide particular order of transactions execution
 
 TEST CASES DUE TO SCENARIOS
 CreateAccountTest
@@ -89,7 +114,9 @@ CreateAccountTest
 - Should receive error when currency does not exist
 PutMoneyTest
 - Should put money to the account successfully
+- Should put money to the account with conversion successfully
 - Should receive error when currency does not exist
+- Should receive error when account does not exist
 MakePaymentTest
 - Should make payment with the same currencies
 - Should make payment with different currencies
@@ -97,6 +124,8 @@ MakePaymentTest
 - Should make two payments from one account in the same time with X + Y > Balance and the second one should fail
 - Should receive error when balance < X with the same currencies
 - Should receive error when Convert(balance) < X with the same currencies
+- Should receive error when FROM account does not exist
+- Should receive error when TO account does not exist
 CreateUserTest
 - Should create user successfully
 - Should receive error when user exists
@@ -121,3 +150,14 @@ CreateCurrencyTest
 - Should receive error when mnemonic code is null
 - Should receive error when full name is empty
 - Should receive error when full name is null
+AddCurrencyPriceTest
+- Should add currency price successfully
+- Should edit currency price successfully
+- Should receive error when FIRST does not exist
+- Should receive error when SECOND does not exist
+- Should receive error when SELL is negative or null
+- Should receive error when BUY is negative or null
+GetCurrencyPriceTest
+- Should get currency price (sell/buy) successfully
+- Should receive an error when currency FROM does not exists
+- Should receive an error when currency TO does not exists

@@ -39,4 +39,16 @@ public class MakePaymentTest {
     public void shouldReceiveErrorWhenBalanceIsNotEnoughWithConversion() {
         throw new RuntimeException();
     }
+
+    @DisplayName("Should receive error when FROM account does not exist")
+    @Test
+    public void getErrorWhenFromDoesNotExist() {
+        throw new RuntimeException();
+    }
+
+    @DisplayName("Should receive error when TO account does not exist")
+    @Test
+    public void getErrorWhenToDoesNotExist() {
+        throw new RuntimeException();
+    }
 }

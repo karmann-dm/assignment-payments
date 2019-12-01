@@ -15,4 +15,16 @@ public class PutMoneyTest {
     public void shouldReceiveErrorWhenCurrencyDoesNotExist() {
         throw new RuntimeException();
     }
+
+    @DisplayName("Should put money to the account with conversion successfully")
+    @Test
+    public void shouldPutMoneyWithConversion() {
+        throw new RuntimeException();
+    }
+
+    @DisplayName("Should receive error when account does not exist")
+    @Test
+    public void getErrorWhenAccountDoesNotExist() {
+        throw new RuntimeException();
+    }
 }
