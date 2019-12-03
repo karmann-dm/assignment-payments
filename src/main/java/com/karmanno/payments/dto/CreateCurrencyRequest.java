@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class CreateCurrencyRequest {
     private String fullName;
-    private int minorUnits;
+    private Integer minorUnits;
     private String mnemonicCode;
 }

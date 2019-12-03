@@ -1,37 +1,69 @@
 package com.karmanno.payments;
 
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.glassfish.jersey.servlet.ServletContainer;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.karmanno.payments.module.MyBatisModule;
+import com.karmanno.payments.module.UserModule;
+import io.logz.guice.jersey.JerseyModule;
+import io.logz.guice.jersey.JerseyServer;
+import io.logz.guice.jersey.configuration.JerseyConfiguration;
+import lombok.SneakyThrows;
+import org.apache.ibatis.jdbc.ScriptRunner;
+import org.apache.ibatis.mapping.Environment;
+import org.apache.ibatis.session.SqlSessionFactory;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.apache.ibatis.io.Resources.getResourceAsReader;
 
 public class Application {
-    public static void main(String[] args) {
-        Server server = new Server(8080);
+    private static final int PORT = 8080;
+    private static final String RESOURCE_PACKAGES = "com.karmanno.payments.rest";
+    private static final String EXCEPTION_PACKAGES = "com.karmanno.payments.exception";
+    private static final String SCHEMA_SCRIPT = "db/database-schema.sql";
+    private static final String DATA_SCRIPT = "db/database-data.sql";
 
-        ServletContextHandler ctx =
-                new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
+    public static void main(String[] args) throws Exception {
+        createJerseyServer(PORT, true).start();
+    }
 
-        ctx.setContextPath("/");
-        server.setHandler(ctx);
+    public static JerseyServer createJerseyServer(int port, boolean withMigration) {
+        JerseyConfiguration configuration = jerseyConfiguration(port);
 
-        ServletHolder serHol = ctx.addServlet(ServletContainer.class, "/api/*");
-        serHol.setInitOrder(1);
-        serHol.setInitParameter(
-                "jersey.config.server.provider.packages",
-                "com.karmanno.payments.rest"
-        );
+        List<Module> modules = new ArrayList<>();
+        modules.add(new JerseyModule(configuration));
+        modules.add(new UserModule());
+        modules.add(new MyBatisModule());
 
-        try {
-            server.start();
-            server.join();
-        } catch (Exception ex) {
-            Logger.getLogger(Application.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            server.destroy();
-        }
+        // Create DI container
+        Injector injector = Guice.createInjector(modules);
+        // Custom migration
+        if (withMigration)
+            migrate(injector);
+        // Start embedded jetty
+        return injector.getInstance(JerseyServer.class);
+    }
+
+    private static JerseyConfiguration jerseyConfiguration(int port) {
+        return  JerseyConfiguration.builder()
+                .addPackage(RESOURCE_PACKAGES)
+                .addPackage(EXCEPTION_PACKAGES)
+                .addPort(port)
+                .build();
+    }
+
+    @SneakyThrows
+    private static void migrate(Injector injector) {
+        Environment environment = injector.getInstance(SqlSessionFactory.class).getConfiguration().getEnvironment();
+        DataSource dataSource = environment.getDataSource();
+        ScriptRunner runner = new ScriptRunner(dataSource.getConnection());
+        runner.setAutoCommit(true);
+        runner.setStopOnError(true);
+        runner.runScript(getResourceAsReader(SCHEMA_SCRIPT));
+        runner.runScript(getResourceAsReader(DATA_SCRIPT));
+        runner.closeConnection();
     }
 }

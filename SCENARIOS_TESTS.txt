@@ -84,6 +84,7 @@ Negative:
 4. Mnemonic code is null? Send client an error 400 with explanation
 5. Full name is empty? Send client an error 400 with explanation
 6. Full name is null? Send client an error 400 with explanation
+7. Currency exists? Send client an error 400 with explanation
 
 Add prices for currency
 Positive:
@@ -150,6 +151,7 @@ CreateCurrencyTest
 - Should receive error when mnemonic code is null
 - Should receive error when full name is empty
 - Should receive error when full name is null
+- Should receive error when currency exists
 AddCurrencyPriceTest
 - Should add currency price successfully
 - Should edit currency price successfully
