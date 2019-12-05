@@ -3,7 +3,7 @@ All test scenarios with user cases you can find in file SCENARIOS_TESTS.txt in r
 ## Test assignment
 It contains simple implementation of payment system.
 
-Implementation is based on Jetty HTTP server, Jersey JAX-RS implementation, Google Guice as DI framework, 
+Implementation is based on embedded Jetty HTTP server, Jersey JAX-RS implementation, Google Guice as DI framework, 
 in-memory H2 database and MyBatis for SQL mapping.
 ### Structure of api
 #### User
