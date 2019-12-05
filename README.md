@@ -2,6 +2,9 @@
 All test scenarios with user cases you can find in file SCENARIOS_TESTS.txt in root folter.
 ## Test assignment
 It contains simple implementation of payment system.
+
+Implementation is based on Jetty HTTP server, Jersey JAX-RS implementation, Google Guice as DI framework, 
+in-memory H2 database and MyBatis for SQL mapping.
 ### Structure of api
 #### User
 User api designed just for logical relations with users and accounts
