@@ -1,12 +1,8 @@
 package com.karmanno.payments.module;
 
 import com.google.inject.name.Names;
-import com.karmanno.payments.dao.UserDao;
-import com.karmanno.payments.dao.UserDaoImpl;
-import com.karmanno.payments.domain.Currency;
-import com.karmanno.payments.domain.User;
-import com.karmanno.payments.mapper.CurrencyMapper;
-import com.karmanno.payments.mapper.UserMapper;
+import com.karmanno.payments.domain.*;
+import com.karmanno.payments.mapper.*;
 import org.apache.ibatis.session.AutoMappingBehavior;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.mybatis.guice.datasource.builtin.PooledDataSourceProvider;
@@ -24,13 +20,18 @@ public class MyBatisModule extends org.mybatis.guice.MyBatisModule {
 
         addSimpleAlias(User.class);
         addSimpleAlias(Currency.class);
+        addSimpleAlias(Account.class);
+        addSimpleAlias(CurrencyPrice.class);
+        addSimpleAlias(Payment.class);
         addMapperClass(UserMapper.class);
         addMapperClass(CurrencyMapper.class);
+        addMapperClass(AccountMapper.class);
+        addMapperClass(CurrencyPriceMapper.class);
+        addMapperClass(PaymentMapper.class);
+
         autoMappingBehavior(AutoMappingBehavior.FULL);
 
         Names.bindProperties(binder(), createProperties());
-
-        bind(UserDao.class).to(UserDaoImpl.class);
     }
 
     private static Properties createProperties() {

@@ -4,8 +4,7 @@ import com.google.inject.Inject;
 import com.karmanno.payments.dao.UserDao;
 import com.karmanno.payments.domain.User;
 import com.karmanno.payments.exception.UserExistException;
-import com.karmanno.payments.exception.UsernameIsEmptyException;
-import com.karmanno.payments.exception.UsernameIsNullException;
+import com.karmanno.payments.exception.UsernameIsIncorrectException;
 import com.karmanno.payments.service.UserService;
 
 import java.util.List;
@@ -30,11 +29,8 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateUsername(String username) {
-        if (username == null) {
-            throw new UsernameIsNullException();
-        }
-        if (username.isEmpty()) {
-            throw new UsernameIsEmptyException();
+        if (username == null || username.isEmpty()) {
+            throw new UsernameIsIncorrectException();
         }
         if (userDao.existsByUsername(username)) {
             throw new UserExistException();

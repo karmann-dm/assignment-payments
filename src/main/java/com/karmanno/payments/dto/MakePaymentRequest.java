@@ -6,5 +6,5 @@ import lombok.Data;
 public class MakePaymentRequest {
     private String accountFrom;
     private String accountTo;
-    private int amount;
+    private String amount;
 }

@@ -3,10 +3,8 @@ package com.karmanno.payments.rest;
 import com.karmanno.payments.domain.User;
 import com.karmanno.payments.dto.CreateUserRequest;
 import com.karmanno.payments.exception.UserExistException;
-import com.karmanno.payments.exception.UsernameIsEmptyException;
-import com.karmanno.payments.exception.UsernameIsNullException;
+import com.karmanno.payments.exception.UsernameIsIncorrectException;
 import com.karmanno.payments.service.UserService;
-import org.h2.jdbc.JdbcSQLException;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -26,7 +24,7 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(CreateUserRequest request)
-            throws UsernameIsEmptyException, UsernameIsNullException, UserExistException {
+            throws UsernameIsIncorrectException, UserExistException {
         User user = userService.create(request.getUsername());
         return Response.status(Response.Status.CREATED)
                 .entity(user)

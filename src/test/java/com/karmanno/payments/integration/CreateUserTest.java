@@ -17,12 +17,12 @@ public class CreateUserTest extends IntegrationTest {
         CreateUserRequest request = createRequest();
 
         // when:
-        HttpResponse httpResponse = targetPost("http://localhost:9001/user", request);
+        HttpResponse httpResponse = targetPost("user", request);
         String jsonData = readJsonData(httpResponse);
-        User user = objectMapper.readValue(jsonData, User.class);
 
         // then:
         Assertions.assertEquals(201, httpResponse.getStatusLine().getStatusCode());
+        User user = objectMapper.readValue(jsonData, User.class);
         Assertions.assertNotNull(user);
         Assertions.assertNotNull(user.getId());
         Assertions.assertNotNull(user.getUsername());
@@ -33,10 +33,10 @@ public class CreateUserTest extends IntegrationTest {
     public void userExists() throws Exception {
         // given:
         CreateUserRequest request = createRequest();
-        EntityUtils.consume(targetPost("http://localhost:9001/user", request).getEntity());
+        EntityUtils.consume(targetPost("user", request).getEntity());
 
         // when:
-        HttpResponse response = targetPost("http://localhost:9001/user", request);
+        HttpResponse response = targetPost("user", request);
 
         // then:
         Assertions.assertEquals(400, response.getStatusLine().getStatusCode());
@@ -49,7 +49,7 @@ public class CreateUserTest extends IntegrationTest {
         CreateUserRequest request = createRequestWithEmptyUsername();
 
         // when:
-        HttpResponse httpResponse = targetPost("http://localhost:9001/user", request);
+        HttpResponse httpResponse = targetPost("user", request);
 
         // then:
         Assertions.assertEquals(400, httpResponse.getStatusLine().getStatusCode());
@@ -62,7 +62,7 @@ public class CreateUserTest extends IntegrationTest {
         CreateUserRequest request = createRequestWithNullUsername();
 
         // when:
-        HttpResponse httpResponse = targetPost("http://localhost:9001/user", request);
+        HttpResponse httpResponse = targetPost("user", request);
 
         // then:
         Assertions.assertEquals(400, httpResponse.getStatusLine().getStatusCode());

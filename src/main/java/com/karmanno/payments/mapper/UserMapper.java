@@ -1,10 +1,7 @@
 package com.karmanno.payments.mapper;
 
 import com.karmanno.payments.domain.User;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -21,4 +18,10 @@ public interface UserMapper {
 
     @Select("select * from users where users.username = #{username}")
     User selectByUsername(@Param("username") String username);
+
+    @Select("select * from users where users.id = #{id}")
+    @Results({
+            @Result(id = true, column = "id", property = "id")
+    })
+    User selectById(@Param("id") Integer id);
 }

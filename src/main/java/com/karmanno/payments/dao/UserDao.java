@@ -8,4 +8,5 @@ public interface UserDao {
     boolean existsByUsername(String username);
     User create(String username);
     List<User> findAll();
+    User findById(Integer id);
 }

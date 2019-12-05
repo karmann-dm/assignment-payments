@@ -1,48 +1,77 @@
 package com.karmanno.payments.integration;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.karmanno.payments.domain.Account;
+import com.karmanno.payments.domain.Payment;
+import com.karmanno.payments.domain.User;
+import com.karmanno.payments.dto.MakePaymentRequest;
+import com.karmanno.payments.dto.PutMoneyRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.message.BasicNameValuePair;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class GetAllPaymentsTest {
-    @DisplayName("Should get all payments by only STATUS filter")
-    @Test
-    public void shouldGetAllPaymentsByStatus() {
-        throw new RuntimeException();
-    }
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
-    @DisplayName("Should get all payments by only DATE filter")
-    @Test
-    public void shouldGetAllPaymentsByDate() {
-        throw new RuntimeException();
-    }
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-    @DisplayName("Should get all payments by only TYPE filter")
-    @Test
-    public void shouldGetAllPaymentsByType() {
-        throw new RuntimeException();
-    }
+public class GetAllPaymentsTest extends IntegrationTest {
 
     @DisplayName("Should get all payments by all filters")
     @Test
-    public void shouldGetAllPayments() {
-        throw new RuntimeException();
+    public void shouldGetAllPayments() throws IOException {
+        // given:
+        User user1 = withUser("user1");
+        User user2 = withUser("user2");
+        withCurrency("Russian rubles", "RUR", 100);
+        Account account1 = withAccount(user1.getId(), "RUR");
+        Account account2 = withAccount(user2.getId(), "RUR");
+        targetPut("account", new PutMoneyRequest().setAmount("2000.00").setAccountNumber(account1.getNumber()).setCurrencyCode("RUR"));
+        MakePaymentRequest request = new MakePaymentRequest()
+                .setAccountFrom(account1.getNumber())
+                .setAccountTo(account2.getNumber())
+                .setAmount("123.45");
+
+        // when:
+        targetPost("payment", request);
+        targetPost("payment", request);
+        targetPost("payment", request);
+        HttpResponse response = targetGet("payment", Arrays.asList(
+                new BasicNameValuePair("account", account1.getNumber())
+        ));
+
+        // then:
+        assertEquals(200, response.getStatusLine().getStatusCode());
+        List<Payment> payments = objectMapper.readValue(readJsonData(response), new TypeReference<List<Payment>>() {});
+        assertEquals(3, payments.size());
     }
 
-    @DisplayName("Should receive error when STATUS does not exist")
+    @DisplayName("Should receive error when account does not exist")
     @Test
-    public void shouldReceiveErrorWithIncorrectStatus() {
-        throw new RuntimeException();
-    }
+    public void shouldReceiveErrorWithIncorrectAccount() {
+        // given:
+        User user1 = withUser("user1");
+        User user2 = withUser("user2");
+        withCurrency("Russian rubles", "RUR", 100);
+        Account account1 = withAccount(user1.getId(), "RUR");
+        Account account2 = withAccount(user2.getId(), "RUR");
+        targetPut("account", new PutMoneyRequest().setAmount("2000.00").setAccountNumber(account1.getNumber()).setCurrencyCode("RUR"));
+        MakePaymentRequest request = new MakePaymentRequest()
+                .setAccountFrom(account1.getNumber())
+                .setAccountTo(account2.getNumber())
+                .setAmount("123.45");
 
-    @DisplayName("Should receive error when dateFrom > dateTo")
-    @Test
-    public void shouldReceiveErrorWithIncorrectDate() {
-        throw new RuntimeException();
-    }
+        // when:
+        targetPost("payment", request);
+        targetPost("payment", request);
+        targetPost("payment", request);
+        HttpResponse response = targetGet("payment", Arrays.asList(
+                new BasicNameValuePair("account", "ddd")
+        ));
 
-    @DisplayName("Should receive error when TYPE does not exist")
-    @Test
-    public void shouldReceiveErrorWithIncorrectType() {
-        throw new RuntimeException();
+        // then:
+        assertEquals(404, response.getStatusLine().getStatusCode());
     }
 }

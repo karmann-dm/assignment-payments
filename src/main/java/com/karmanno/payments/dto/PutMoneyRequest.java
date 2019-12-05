@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class PutMoneyRequest {
+    private String accountNumber;
     private String currencyCode;
-    private int amount;
+    private String amount;
 }

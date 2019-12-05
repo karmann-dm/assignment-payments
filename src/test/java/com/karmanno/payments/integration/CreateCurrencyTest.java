@@ -17,12 +17,13 @@ public class CreateCurrencyTest extends IntegrationTest {
         CreateCurrencyRequest request = currencyRequest();
 
         // when:
-        HttpResponse response = targetPost("http://localhost:9001/currency", request);
+        HttpResponse response = targetPost("currency", request);
         String currencyJson = readJsonData(response);
-        Currency currency = objectMapper.readValue(currencyJson, Currency.class);
 
         // then:
         Assertions.assertEquals(201, response.getStatusLine().getStatusCode());
+
+        Currency currency = objectMapper.readValue(currencyJson, Currency.class);
         Assertions.assertNotNull(currency);
         Assertions.assertEquals(currency.getCode(), request.getMnemonicCode());
         Assertions.assertEquals(currency.getFullName(), request.getFullName());
@@ -36,7 +37,7 @@ public class CreateCurrencyTest extends IntegrationTest {
         CreateCurrencyRequest request = currencyRequestWithNegativeUnits();
 
         // when:
-        HttpResponse response = targetPost("http://localhost:9001/currency", request);
+        HttpResponse response = targetPost("currency", request);
 
         // then:
         Assertions.assertEquals(400, response.getStatusLine().getStatusCode());
@@ -49,7 +50,7 @@ public class CreateCurrencyTest extends IntegrationTest {
         CreateCurrencyRequest request = currencyRequestWithNullUnits();
 
         // when:
-        HttpResponse response = targetPost("http://localhost:9001/currency", request);
+        HttpResponse response = targetPost("currency", request);
 
         // then:
         Assertions.assertEquals(400, response.getStatusLine().getStatusCode());
@@ -62,7 +63,7 @@ public class CreateCurrencyTest extends IntegrationTest {
         CreateCurrencyRequest request = currencyRequestWithEmptyCode();
 
         // when:
-        HttpResponse response = targetPost("http://localhost:9001/currency", request);
+        HttpResponse response = targetPost("currency", request);
 
         // then:
         Assertions.assertEquals(400, response.getStatusLine().getStatusCode());
@@ -75,7 +76,7 @@ public class CreateCurrencyTest extends IntegrationTest {
         CreateCurrencyRequest request = currencyRequestWithNullCode();
 
         // when:
-        HttpResponse response = targetPost("http://localhost:9001/currency", request);
+        HttpResponse response = targetPost("currency", request);
 
         // then:
         Assertions.assertEquals(400, response.getStatusLine().getStatusCode());
@@ -88,7 +89,7 @@ public class CreateCurrencyTest extends IntegrationTest {
         CreateCurrencyRequest request = currencyRequestWithEmptyFullName();
 
         // when:
-        HttpResponse response = targetPost("http://localhost:9001/currency", request);
+        HttpResponse response = targetPost("currency", request);
 
         // then:
         Assertions.assertEquals(400, response.getStatusLine().getStatusCode());
@@ -101,7 +102,7 @@ public class CreateCurrencyTest extends IntegrationTest {
         CreateCurrencyRequest request = currencyRequestWithNullFullName();
 
         // when:
-        HttpResponse response = targetPost("http://localhost:9001/currency", request);
+        HttpResponse response = targetPost("currency", request);
 
         // then:
         Assertions.assertEquals(400, response.getStatusLine().getStatusCode());

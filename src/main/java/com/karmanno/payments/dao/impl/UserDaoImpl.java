@@ -1,23 +1,21 @@
-package com.karmanno.payments.dao;
+package com.karmanno.payments.dao.impl;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.karmanno.payments.dao.UserDao;
 import com.karmanno.payments.domain.User;
 import com.karmanno.payments.mapper.UserMapper;
 import lombok.SneakyThrows;
-import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.util.List;
 
 @Singleton
 public class UserDaoImpl implements UserDao {
     private final UserMapper userMapper;
-    private final SqlSessionFactory sqlSessionFactory;
 
     @Inject
-    public UserDaoImpl(UserMapper userMapper, SqlSessionFactory sqlSessionFactory) {
+    public UserDaoImpl(UserMapper userMapper) {
         this.userMapper = userMapper;
-        this.sqlSessionFactory = sqlSessionFactory;
     }
 
     @Override
@@ -39,5 +37,10 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<User> findAll() {
         return userMapper.findAll();
+    }
+
+    @Override
+    public User findById(Integer id) {
+        return userMapper.selectById(id);
     }
 }

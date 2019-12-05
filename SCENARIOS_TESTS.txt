@@ -29,6 +29,8 @@ Negative cases:
    What should system do? Send user an error with the explanation "Currency with code $CODE$ does not exist" with code 404
 2. What happens? Account that he want does not exists
    What should system do? Send user an error with the explanation "Account $ACCOUNT$ does not exist" with code 404
+3. What happens? Amount is in incorrect format
+   What should system do? Send user an error with the explanation "Amount has incorrect format. Example: "123.4"" with code 400
 
 Make payments with amount = X to another account FROM -> TO
 Positive cases:
@@ -47,6 +49,8 @@ Negative cases:
    What should system do? Send client an error with explanation "Account $ACCOUNT$ does not exist"
 6. Account TO does not exist
    What should system do? Send client an error with explanation "Account $ACCOUNT$ does not exist"
+7. Amount is in incorrect format?
+   Send error 400 with explanation
 
 Create the user
 Positive cases:
@@ -93,8 +97,7 @@ Positive:
 Negative:
 1. Currency FIRST does not exists? Send an error 404 with explanation
 2. Currency SECOND does not exists?  Send an error 404 with explanation
-3. Sell is negative or null? Send an error 400 with explanation
-4. Buy is negative or null? Send an error 400 with explanation
+3. Amount has incorrect format? Send an error 400 with explanation
 
 Get sell/buy for currency
 Positive:
@@ -118,6 +121,7 @@ PutMoneyTest
 - Should put money to the account with conversion successfully
 - Should receive error when currency does not exist
 - Should receive error when account does not exist
+- Should receive error when amount is in incorrect format
 MakePaymentTest
 - Should make payment with the same currencies
 - Should make payment with different currencies
@@ -127,6 +131,7 @@ MakePaymentTest
 - Should receive error when Convert(balance) < X with the same currencies
 - Should receive error when FROM account does not exist
 - Should receive error when TO account does not exist
+- Should receive error when amount is in incorrect format
 CreateUserTest
 - Should create user successfully
 - Should receive error when user exists
@@ -155,10 +160,10 @@ CreateCurrencyTest
 AddCurrencyPriceTest
 - Should add currency price successfully
 - Should edit currency price successfully
+- Should receive error when amount is in incorrect format while adding
+- Should receive error when amount is in incorrect format while editing
 - Should receive error when FIRST does not exist
 - Should receive error when SECOND does not exist
-- Should receive error when SELL is negative or null
-- Should receive error when BUY is negative or null
 GetCurrencyPriceTest
 - Should get currency price (sell/buy) successfully
 - Should receive an error when currency FROM does not exists
